@@ -1,0 +1,5 @@
+#path	start	end	mean.depth
+5+	0	10	2
+5+	10	13	2
+5-	0	10	2
+5-	10	13	2

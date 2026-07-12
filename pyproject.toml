@@ -1,0 +1,24 @@
+[build-system]
+requires = ["meson-python"]
+build-backend = "mesonpy"
+
+[project]
+name = "domagi"
+version = "0.1.0"
+authors = [
+  { name="Arun Isaac", email="arunisaac@systemreboot.net" }
+]
+description = "DuckDB Optimized Dynamic Graph Implementation"
+readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent"
+]
+license = {file = "COPYING"}
+dependencies = [
+  "click",
+  "duckdb"
+]
+
+[project.scripts]
+domagi = "domagi.domagi:main"

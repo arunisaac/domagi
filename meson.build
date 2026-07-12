@@ -1,0 +1,23 @@
+project('domagi', 'c')
+
+cc = meson.get_compiler('c')
+cc.has_header('verstable.h', required: true)
+duckdb = dependency('DuckDB')
+omp = dependency('openmp')
+
+py = import('python').find_installation()
+py.install_sources('domagi/domagi.py',
+                   subdir: 'domagi')
+
+install_data('domagi/matrix.sql',
+             'domagi/schema.sql',
+             'domagi/bed-depth.sql',
+             'domagi/path-depth.sql',
+             'domagi/pre-import.sql',
+	     'domagi/post-import.sql',
+             install_dir: py.get_install_dir() / 'domagi')
+
+executable('domagi_importgfa',
+           'c/importgfa.c',
+           dependencies: [duckdb, omp],
+           install: true)
