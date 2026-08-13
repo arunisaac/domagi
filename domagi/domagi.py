@@ -66,7 +66,7 @@ def read_sql(filename):
 def main():
     pass
 
-@main.command()
+@main.command(short_help="Convert GFA pangenome file to domagi DuckDB database")
 @click.option("-g", "--gfa", "gfa",
               metavar="FILE",
               required=True,
@@ -86,7 +86,7 @@ def build(gfa, db, threads):
     with connect_duckdb(db, threads) as con:
         con.execute(read_sql("post-import.sql"))
 
-@main.command()
+@main.command(short_help="Crush runs of Ns")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -116,7 +116,7 @@ def crush(con, outfile, threads):
       ORDER BY path_id, start, "end"
     """)
 
-@main.command()
+@main.command(short_help="Compute depth of graph nodes")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -159,7 +159,7 @@ def depth(con, graph_depth_table, paths, bed_input, threads):
             # The start is always 0.
             print("\t".join([path_name, str(0), str(end), str(mean_depth)]))
 
-@main.command()
+@main.command(short_help="Extract subgraphs")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -244,7 +244,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads):
     """)
 
 # TODO: Add synopses for commands.
-@main.command()
+@main.command(short_help="Write graph in sparse matrix format")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -257,7 +257,7 @@ def matrix(con, threads):
     print(segment_count, segment_count, df.shape[0])
     df.to_csv(sys.stdout, sep=" ", header=False, index=False)
 
-@main.command()
+@main.command(short_help="Interrogate paths")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -285,7 +285,7 @@ def paths(con, list_paths, fasta, threads):
             print(f">{name}")
             print(sequence)
 
-@main.command()
+@main.command(short_help="Compute graph statistics")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
@@ -306,7 +306,7 @@ def stats(con, summarize, threads):
     print("\t".join([str(length), str(nodes), str(edges),
                      str(paths), str(steps)]))
 
-@main.command()
+@main.command(short_help="Convert domagi DuckDB database pangenome to other formats")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
               required=True,
