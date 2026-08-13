@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<varlistentry xmlns="http://docbook.org/ns/docbook">
+  <term><option>-t <replaceable>THREADS</replaceable></option></term>
+  <term><option>--threads=<replaceable>THREADS</replaceable></option></term>
+  <listitem><para>Number of threads. If unspecified, all available CPUs are used.</para></listitem>
+</varlistentry>

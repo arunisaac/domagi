@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-depth.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Find the depth of a graph as defined by query criteria. The depth of each segment is defined as the number of paths that run through that segment. When invoked without any options, the mean depth of each path is printed in a four-column tab-delimited format with the following columns—path, start coordinate, end coordinate and mean depth. The mean depth of a path is the mean of the depth of all segments in that path with each depth weighted by the length of that segment.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-r <replaceable>PATH</replaceable></option></term>
+        <term><option>--path=<replaceable>PATH</replaceable></option></term>
+        <listitem><para>Only compute the mean depth of the specified path. This argument may be specified more than once to compute the mean depth of more than one path.</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-b <replaceable>FILE</replaceable></option></term>
+        <term><option>--bed-input=<replaceable>FILE</replaceable></option></term>
+        <listitem><para>BED file specifying ranges over paths of the graph. When this option is specified, compute the mean depth of these ranges rather than the mean depth of the paths.</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-d</option></term>
+        <term><option>--graph-depth-table</option></term>
+        <listitem><para>Print the depth and unique depth of each segment in the graph. The unique depth of a segment is the number of distinct paths that run through that segment. The output is printed in a three-column tab-delimited format with the following columns—segment name, depth and unique depth.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

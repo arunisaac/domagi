@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-build.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Convert GFA pangenome file to domagi DuckDB database.</para>
+    <variablelist>
+      <title>Options</title>
+      <varlistentry>
+        <term><option>-g <replaceable>FILE</replaceable></option></term>
+        <term><option>--gfa=<replaceable>FILE</replaceable></option></term>
+        <listitem><para>Input GFAv1 pangenome file</para></listitem>
+      </varlistentry>
+      <xi:include href="output-db-argument.dbk" />
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

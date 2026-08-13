@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<book xmlns="http://docbook.org/ns/docbook"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<info>
+  <title>domagi manual</title>
+  <copyright><year>2026</year><holder>Arun Isaac</holder></copyright>
+</info>
+<reference>
+  <title>Reference</title>
+  <xi:include href="domagi-build.dbk" />
+  <xi:include href="domagi-crush.dbk" />
+  <xi:include href="domagi-depth.dbk" />
+  <xi:include href="domagi-extract.dbk" />
+  <xi:include href="domagi-matrix.dbk" />
+  <xi:include href="domagi-paths.dbk" />
+  <xi:include href="domagi-stats.dbk" />
+  <xi:include href="domagi-view.dbk" />
+</reference>
+</book>

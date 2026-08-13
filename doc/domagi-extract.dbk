@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-extract.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Extract subgraphs or parts of a graph defined by query criteria.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <xi:include href="output-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-n <replaceable>SEGMENT</replaceable></option></term>
+        <term><option>--node=<replaceable>SEGMENT</replaceable></option></term>
+        <listitem><para>Segment name from which to begin the traversal</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-r <replaceable>PATH_RANGE</replaceable></option></term>
+        <term><option>--path-range=<replaceable>PATH_RANGE</replaceable></option></term>
+        <listitem><para>Path range, in <replaceable>path[:pos1[-pos2]]</replaceable> format, from which to begin the traversal</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-c <replaceable>STEPS</replaceable></option></term>
+        <term><option>--context-steps=<replaceable>STEPS</replaceable></option></term>
+        <listitem><para>The number of segments away from the initial segments to traverse</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<varlistentry xmlns="http://docbook.org/ns/docbook">
+  <term><option>-h</option></term>
+  <term><option>--help</option></term>
+  <listitem><para>Show help message and exit</para></listitem>
+</varlistentry>

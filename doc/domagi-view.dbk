@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-view.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Convert a pangenome in domagi DuckDB database format to other formats. Only GFAv1 is supported at the moment. Nothing is output unless one of the relevant options are specified.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-g</option></term>
+        <term><option>--to-gfa</option></term>
+        <listitem><para>Write the pangenome to GFAv1 format.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

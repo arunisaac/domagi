@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xi:include href="gen-refentry-crush.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Replace runs of Ns with single <literal>N</literal>s (for example, <literal>ANNNT</literal> becomes <literal>ANT</literal>). Similar to <link xlink:href="https://www.ncbi.nlm.nih.gov/genbank/fastaformat/">the FASTA format</link>, the symbol <literal>N</literal> is used to represent ambiguous or unknown nucleotides.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <xi:include href="output-db-argument.dbk" />
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

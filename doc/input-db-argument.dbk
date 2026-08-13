@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<varlistentry xmlns="http://docbook.org/ns/docbook">
+  <term><option>-i <replaceable>DB</replaceable></option></term>
+  <term><option>--db=<replaceable>DB</replaceable></option></term>
+  <term><option>--idx=<replaceable>DB</replaceable></option></term>
+  <listitem><para>Input pangenome DuckDB database</para></listitem>
+</varlistentry>

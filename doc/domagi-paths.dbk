@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-paths.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Interrogate paths in the pangenome. Nothing is output unless one of the relevant options are specified.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-L</option></term>
+        <term><option>--list-paths</option></term>
+        <listitem><para>Print the names of paths in the pangenome, one per line.</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-f</option></term>
+        <term><option>--fasta</option></term>
+        <listitem><para>Print paths in FASTA format.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

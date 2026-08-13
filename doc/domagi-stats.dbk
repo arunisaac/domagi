@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-stats.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Compute variation graph statistics. Among other metrics, it can compute the number nodes, the number of edges, the number of paths and the total nucleotide length of the graph.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-S</option></term>
+        <term><option>--summarize</option></term>
+        <listitem><para>Summarize the graph properties. Output is printed in a five-column tab-delimited format with the following columns—the number of nucleotides, the number of segments, the number of links, the number of paths, and the number of steps. The number of nucleotides is the total number across all segments of the graph. The number of steps is the total number of segments traversed by all paths in the pangenome. Segments that are traversed more than once are counted multiple times.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

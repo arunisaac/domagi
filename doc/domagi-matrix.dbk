@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xi:include href="gen-refentry-matrix.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Write the graph in the <link xlink:href="https://en.wikipedia.org/wiki/Sparse_matrix#Coordinate_list_(COO)">coordinate list</link> sparse matrix format.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>
