@@ -267,9 +267,15 @@ def matrix(con, threads):
               multiple=True,
               metavar="PATH",
               help="find paths touched by PATH")
+@click.option("-R", "--paths", "paths_file",
+              type=click.File(),
+              metavar="FILE",
+              help="find paths touched by paths listed in FILE")
 @common_options
-def overlap(con, paths, threads):
+def overlap(con, paths, paths_file, threads):
     set_duckdb_threads(con, threads)
+    if paths_file:
+        paths = [line.rstrip() for line in paths_file.readlines()]
     (con.execute(read_sql("overlap.sql"), [paths])
      .fetchdf()
      .to_csv(sys.stdout, sep="\t", index=False))

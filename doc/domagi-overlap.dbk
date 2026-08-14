@@ -13,6 +13,11 @@
         <term><option>--path=<replaceable>PATH</replaceable></option></term>
         <listitem><para>Find paths touched by <replaceable>PATH</replaceable>. This argument may be specified more than once to find paths touched by more than one path.</para></listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>-R <replaceable>FILE</replaceable></option></term>
+        <term><option>--paths=<replaceable>FILE</replaceable></option></term>
+        <listitem><para>Find paths touched by paths listed in <replaceable>FILE</replaceable>, one per line.</para></listitem>
+      </varlistentry>
       <xi:include href="threads-argument.dbk" />
       <xi:include href="help-option.dbk" />
     </variablelist>

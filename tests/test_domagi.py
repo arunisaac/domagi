@@ -214,6 +214,23 @@ def test_domagi_overlap(tmp_path, test_data_file, expected_output):
                        .sort_values(by=["#path", "path.touched"],
                                     ignore_index=True),
                        check_dtype=False)
+    # Test passing in the paths through a file.
+    paths_file = tmp_path / "paths"
+    with open(paths_file, "w") as file:
+        for path in paths:
+            print(path, file=file)
+    result = runner.invoke(main, ["overlap",
+                                  "--db", duckdb_path,
+                                  "--paths", paths_file])
+    assert result.exit_code == 0
+    assert_frame_equal(pd.read_csv(expected_output, sep="\t")
+                       .sort_values(by=["#path", "path.touched"],
+                                    ignore_index=True),
+                       pd.read_csv(io.StringIO(result.stdout),
+                                   sep="\t")
+                       .sort_values(by=["#path", "path.touched"],
+                                    ignore_index=True),
+                       check_dtype=False)
 
 @pytest.mark.parametrize("test_data_file, expected_output",
                          [(Path("test-data/test1.gfa"),
