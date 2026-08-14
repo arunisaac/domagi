@@ -74,7 +74,7 @@ def test_domagi_crush(tmp_path, test_data_file, expected_output):
                            Path("test-data/expected-output/test3-depth"))])
 def test_domagi_depth(tmp_path, test_data_file, expected_output):
     expected = (pd.read_csv(expected_output, sep="\t")
-                .sort_values(by=["#path"], ignore_index=True))
+                .sort_values(by="#path", ignore_index=True))
     duckdb_path = tmp_path / f"{test_data_file.stem}.db"
     runner = CliRunner()
     result = runner.invoke(main, ["build",
@@ -87,7 +87,7 @@ def test_domagi_depth(tmp_path, test_data_file, expected_output):
     assert_frame_equal(expected,
                        pd.read_csv(io.StringIO(result.stdout),
                                    sep="\t")
-                       .sort_values(by=["#path"],
+                       .sort_values(by="#path",
                                     ignore_index=True),
                        check_dtype=False)
     for _, row in expected.iterrows():
@@ -100,7 +100,7 @@ def test_domagi_depth(tmp_path, test_data_file, expected_output):
         assert_frame_equal(per_path_expected,
                            pd.read_csv(io.StringIO(result.stdout),
                                        sep="\t")
-                           .sort_values(by=["#path"],
+                           .sort_values(by="#path",
                                         ignore_index=True),
                            check_dtype=False)
 
@@ -123,11 +123,11 @@ def test_domagi_depth_graph_depth(tmp_path, test_data_file, expected_output):
                                   "--db", duckdb_path])
     assert result.exit_code == 0
     assert_frame_equal(pd.read_csv(expected_output, sep="\t")
-                       .sort_values(by=["#node.id"],
+                       .sort_values(by="#node.id",
                                     ignore_index=True),
                        pd.read_csv(io.StringIO(result.stdout),
                                    sep="\t")
-                       .sort_values(by=["#node.id"],
+                       .sort_values(by="#node.id",
                                     ignore_index=True),
                        check_dtype=False)
 
