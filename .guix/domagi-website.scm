@@ -17,10 +17,15 @@
 ;;; domagi. If not, see <https://www.gnu.org/licenses/>.
 
 (define-module (domagi-website)
+  #:use-module ((gnu packages docbook) #:select (docbook-xsltng))
   #:use-module ((gnu packages fonts) #:select (font-charter font-fira-code))
   #:use-module ((gnu packages haskell-xyz) #:select (pandoc))
+  #:use-module ((gnu packages python) #:select (python))
+  #:use-module ((gnu packages xml) #:select (python-lxml))
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix profiles)
+  #:use-module (guix utils)
   #:use-module ((domagi-package) #:select (domagi)))
 
 (define domagi-website-home-page-gexp
@@ -40,12 +45,42 @@
                 (string-append "--output=" #$output)
                 "README.md"))))
 
+(define domagi-web-manual-en-gexp
+  (with-imported-modules '((guix build utils))
+    #~(begin
+        (use-modules (guix build utils))
+
+        (setenv "HOME" "/tmp")
+        (set-path-environment-variable
+         "GUIX_PYTHONPATH"
+         (list (string-append "lib/python"
+                              #$(version-major+minor (package-version python))
+                              "/site-packages"))
+         (list #$(profile
+                   (content (concatenate-manifests
+                             (list (packages->manifest (list python-lxml))
+                                   (package->development-manifest domagi)))))))
+        (copy-recursively #$(file-append (package-source domagi)
+                                         "/doc")
+                          (string-append (getcwd) "/doc"))
+        (invoke #$(file-append python "/bin/python3")
+                (string-append #$(package-source domagi) "/extractdoc.py"))
+        (invoke #$(file-append docbook-xsltng "/bin/docbook")
+                (string-append "--resources:" #$output)
+                "-xi:on"
+                "resource-base-uri=/domagi/manual/"
+                "-s:doc/domagi.dbk"
+                (string-append "-o:" #$output "/dev/en/index.html")))))
+
 (define-public domagi-website
   (file-union "domagi-website"
               `(("index.html"
                  ,(computed-file "domagi-website-home-page.html"
                                  domagi-website-home-page-gexp))
                 ("style.css" ,(local-file "../website/style.css"))
+                ("manual"
+                 ,(computed-file "domagi-web-manual-en"
+                                 domagi-web-manual-en-gexp))
                 ("fonts/charter_regular.woff2"
                  ,(file-append font-charter
                                "/share/fonts/web/charter_regular.woff2"))
