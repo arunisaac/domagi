@@ -243,7 +243,6 @@ def extract(con, outfile, segment_name, path_range, steps, threads):
     DROP TABLE initial_segment;
     """)
 
-# TODO: Add synopses for commands.
 @main.command(short_help="Write graph in sparse matrix format")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),
