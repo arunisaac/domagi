@@ -276,10 +276,11 @@ def paths(con, list_paths, fasta, threads):
             print(name)
     elif fasta:
         for name, sequence in con.execute("""
-        SELECT ANY_VALUE(path_name),
-               string_agg(sequence, '' ORDER BY position)
-        FROM path
+        SELECT ANY_VALUE(path.name),
+               string_agg(sequence, '' ORDER BY start)
+        FROM path_segment
         INNER JOIN segment ON segment.id = path_segment.segment_id
+        INNER JOIN path ON path.id = path_segment.path_id
         GROUP BY path_id
         """).fetchall():
             print(f">{name}")
