@@ -29,3 +29,14 @@ Run tests.
 ```
 ./pre-inst-env python3 -m pytest
 ```
+
+# Build the website
+
+Build the website using Guix.
+```
+guix build -L .guix -f .guix/domagi-website.scm
+```
+Serve it using darkhttpd like below, then navigate to http://localhost:8080/domagi/ on your browser.
+```
+darkhttpd $(guix build -L .guix -f .guix/domagi-website.scm) --addr 127.0.0.1
+```
