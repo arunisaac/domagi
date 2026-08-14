@@ -207,6 +207,28 @@ def test_domagi_paths(tmp_path, test_data_file, expected_output):
                                    header=None),
                        check_dtype=False)
 
+@pytest.mark.xfail
+@pytest.mark.parametrize("test_data_file, expected_output",
+                         [(Path("test-data/test1.gfa"),
+                           Path("test-data/expected-output/test1.fa")),
+                          (Path("test-data/test2.gfa"),
+                           Path("test-data/expected-output/test2.fa")),
+                          (Path("test-data/test3.gfa"),
+                           Path("test-data/expected-output/test3.fa"))])
+def test_domagi_paths_fasta(tmp_path, test_data_file, expected_output):
+    duckdb_path = tmp_path / f"{test_data_file.stem}.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["build",
+                                  "--gfa", test_data_file,
+                                  "--out", duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["paths",
+                                  "--fasta",
+                                  "--db", duckdb_path])
+    assert result.exit_code == 0
+    with open(expected_output) as file:
+        assert result.stdout == file.read()
+
 @pytest.mark.parametrize("test_data_file, expected_output",
                          [(Path("test-data/test1.gfa"),
                            Path("test-data/expected-output/test1-stats")),
