@@ -207,7 +207,6 @@ def test_domagi_paths(tmp_path, test_data_file, expected_output):
                                    header=None),
                        check_dtype=False)
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("test_data_file, expected_output",
                          [(Path("test-data/test1.gfa"),
                            Path("test-data/expected-output/test1.fa")),

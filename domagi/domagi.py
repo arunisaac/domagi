@@ -275,9 +275,14 @@ def paths(con, list_paths, fasta, threads):
         for name, in con.execute("SELECT name FROM path").fetchall():
             print(name)
     elif fasta:
+        # We take care to reverse complement soft masked lower case nucleotides
+        # as well.
         for name, sequence in con.execute("""
         SELECT ANY_VALUE(path.name),
-               string_agg(sequence, '' ORDER BY start)
+               string_agg(CASE WHEN segment_orientation='+' THEN sequence
+                          ELSE reverse(translate(sequence, 'AGCTagct', 'TCGAtcga'))
+                          END,
+                          '' ORDER BY start)
         FROM path_segment
         INNER JOIN segment ON segment.id = path_segment.segment_id
         INNER JOIN path ON path.id = path_segment.path_id
