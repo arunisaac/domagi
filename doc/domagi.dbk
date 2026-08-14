@@ -12,6 +12,7 @@
   <xi:include href="domagi-depth.dbk" />
   <xi:include href="domagi-extract.dbk" />
   <xi:include href="domagi-matrix.dbk" />
+  <xi:include href="domagi-overlap.dbk" />
   <xi:include href="domagi-paths.dbk" />
   <xi:include href="domagi-stats.dbk" />
   <xi:include href="domagi-view.dbk" />

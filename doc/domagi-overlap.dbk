@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="gen-refentry-overlap.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Find the paths touched by the specified paths. The output is in a four-column tab-delimited format with the following columns—the name of the specified path, its start coordinate, its end coordinate, and the name of the path that touches it. The start and end coordinates are always 0 and the length of the specified path.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-r <replaceable>PATH</replaceable></option></term>
+        <term><option>--path=<replaceable>PATH</replaceable></option></term>
+        <listitem><para>Find paths touched by <replaceable>PATH</replaceable>. This argument may be specified more than once to find paths touched by more than one path.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

@@ -256,6 +256,24 @@ def matrix(con, threads):
     print(segment_count, segment_count, df.shape[0])
     df.to_csv(sys.stdout, sep=" ", header=False, index=False)
 
+@main.command(short_help="Find paths touched by given input paths")
+@click.option("-i", "--db", "--idx", "con",
+              type=DuckDBParamType(),
+              required=True,
+              help="pangenome duckdb database")
+@click.option("-r", "--path", "paths",
+              # We deviate a little from odgi and allow -r to be specified
+              # several times.
+              multiple=True,
+              metavar="PATH",
+              help="find paths touched by PATH")
+@common_options
+def overlap(con, paths, threads):
+    set_duckdb_threads(con, threads)
+    (con.execute(read_sql("overlap.sql"), [paths])
+     .fetchdf()
+     .to_csv(sys.stdout, sep="\t", index=False))
+
 @main.command(short_help="Interrogate paths")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),

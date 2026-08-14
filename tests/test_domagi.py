@@ -19,6 +19,7 @@
 import io
 
 from click.testing import CliRunner
+import duckdb
 import pandas as pd
 from pandas.testing import assert_frame_equal
 from pathlib import Path
@@ -182,6 +183,37 @@ def test_domagi_matrix(tmp_path, test_data_file, expected_output):
         actual_header, actual_lines = read_matrix_file(file)
     assert expected_header == actual_header
     assert expected_lines == actual_lines
+
+@pytest.mark.parametrize("test_data_file, expected_output",
+                         [(Path("test-data/test1.gfa"),
+                           Path("test-data/expected-output/test1-overlap")),
+                          (Path("test-data/test2.gfa"),
+                           Path("test-data/expected-output/test2-overlap")),
+                          (Path("test-data/test3.gfa"),
+                           Path("test-data/expected-output/test3-overlap"))])
+def test_domagi_overlap(tmp_path, test_data_file, expected_output):
+    duckdb_path = tmp_path / f"{test_data_file.stem}.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["build",
+                                  "--gfa", test_data_file,
+                                  "--out", duckdb_path])
+    assert result.exit_code == 0
+    paths = [path for path, in (duckdb.connect(duckdb_path, True)
+                                .execute("SELECT name FROM path")
+                                .fetchall())]
+    result = runner.invoke(main, ["overlap",
+                                  "--db", duckdb_path,
+                                  *sum([["--path", path] for path in paths],
+                                       [])])
+    assert result.exit_code == 0
+    assert_frame_equal(pd.read_csv(expected_output, sep="\t")
+                       .sort_values(by=["#path", "path.touched"],
+                                    ignore_index=True),
+                       pd.read_csv(io.StringIO(result.stdout),
+                                   sep="\t")
+                       .sort_values(by=["#path", "path.touched"],
+                                    ignore_index=True),
+                       check_dtype=False)
 
 @pytest.mark.parametrize("test_data_file, expected_output",
                          [(Path("test-data/test1.gfa"),
