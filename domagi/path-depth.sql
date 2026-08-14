@@ -9,15 +9,6 @@ WITH path_depth AS (
        INNER JOIN path ON path.id=path_segment.path_id
        -- subset paths
        WHERE ($1 IS NULL) OR (path.name IN (SELECT UNNEST($1)))
-       GROUP BY path_id),
-     path_length AS (
-       -- Compute length of each path.
-       SELECT path_id, sum(len(sequence)) AS length
-       FROM path_segment
-       INNER JOIN segment ON segment_id=segment.id
-       INNER JOIN path ON path.id=path_segment.path_id
-       -- subset paths (same filter as above)
-       WHERE (($1 IS NULL) OR (path.name IN (SELECT UNNEST($1))))
        GROUP BY path_id)
     -- Combine path name, length and mean depth for display.
     SELECT name, length, mean_depth

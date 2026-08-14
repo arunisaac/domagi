@@ -28,6 +28,13 @@ CREATE TABLE path_segment (
        "end" INTEGER,
 );
 
+-- One-to-one relation mapping path IDs to their length
+CREATE VIEW path_length AS
+  SELECT ANY_VALUE(path_id) AS path_id, sum(len(sequence))::INTEGER AS length
+  FROM path_segment
+  INNER JOIN segment ON segment.id=path_segment.segment_id
+  GROUP BY path_id;
+
 -- One-to-one relation mapping segment IDs to their depth
 CREATE VIEW segment_depth AS
   WITH segment_depth_nonzero_depths_only AS (
