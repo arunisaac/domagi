@@ -316,3 +316,20 @@ def test_domagi_view(tmp_path, test_data_file):
     assert result.exit_code == 0
     with open(test_data_file) as expected:
         assert_gfa_equal(expected, io.StringIO(result.stdout))
+
+def test_error_on_missing_paths(tmp_path):
+    test_data_file = Path("test-data/test1.gfa")
+    duckdb_path = tmp_path / f"{test_data_file.stem}.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["build",
+                                  "--gfa", test_data_file,
+                                  "--out", duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["depth",
+                                  "--db", duckdb_path,
+                                  "--path", "xx"])
+    assert result.exit_code == 1 and result.output == "Paths ['xx'] not found\n"
+    result = runner.invoke(main, ["overlap",
+                                  "--db", duckdb_path,
+                                  "--path", "xx"])
+    assert result.exit_code == 1 and result.output == "Paths ['xx'] not found\n"

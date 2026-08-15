@@ -50,6 +50,16 @@ def set_duckdb_threads(con, threads):
     if threads:
         con.execute(f"SET threads TO {threads}")
 
+def assert_paths_exist(con, paths):
+    non_existent_paths = [path for path, in con.execute("""
+    SELECT UNNEST(?)
+    EXCEPT
+    SELECT name FROM path
+    """,
+    [paths]).fetchall()]
+    if non_existent_paths:
+        sys.exit(f"Paths {non_existent_paths} not found")
+
 @contextmanager
 def connect_duckdb(path, threads):
     with duckdb.connect(path) as con:
@@ -134,6 +144,7 @@ def crush(con, outfile, threads):
 @common_options
 def depth(con, graph_depth_table, paths, bed_input, threads):
     set_duckdb_threads(con, threads)
+    assert_paths_exist(con, paths)
     # With the -d flag, print the depth and unique depth of every
     # node.
     if graph_depth_table:
@@ -276,6 +287,7 @@ def overlap(con, paths, paths_file, threads):
     set_duckdb_threads(con, threads)
     if paths_file:
         paths = [line.rstrip() for line in paths_file.readlines()]
+    assert_paths_exist(con, paths)
     (con.execute(read_sql("overlap.sql"), [paths])
      .fetchdf()
      .to_csv(sys.stdout, sep="\t", index=False))
