@@ -8,6 +8,7 @@
 <reference>
   <title>Reference</title>
   <xi:include href="domagi-build.dbk" />
+  <xi:include href="domagi-chop.dbk" />
   <xi:include href="domagi-crush.dbk" />
   <xi:include href="domagi-depth.dbk" />
   <xi:include href="domagi-extract.dbk" />

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xmlns="http://docbook.org/ns/docbook"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xi:include href="gen-refentry-chop.xml" />
+  <refsection>
+    <title>Description</title>
+    <para>Divide segments into smaller pieces while preserving the graph topology.</para>
+    <variablelist>
+      <title>Options</title>
+      <xi:include href="input-db-argument.dbk" />
+      <xi:include href="output-db-argument.dbk" />
+      <varlistentry>
+        <term><option>-c <replaceable>N</replaceable></option></term>
+        <term><option>--chop-to=<replaceable>N</replaceable></option></term>
+        <listitem><para>Divide nodes that are longer than <replaceable>N</replaceable> base pairs into nodes no longer than <replaceable>N</replaceable> while preserving the graph topology.</para></listitem>
+      </varlistentry>
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+  </refsection>
+</refentry>

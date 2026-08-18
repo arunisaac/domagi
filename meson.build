@@ -11,6 +11,8 @@ py.install_sources('domagi/domagi.py',
 
 install_data('domagi/matrix.sql',
              'domagi/schema.sql',
+             'domagi/chop-1.sql',
+             'domagi/chop-2.sql',
              'domagi/bed-depth.sql',
              'domagi/overlap.sql',
              'domagi/path-depth.sql',

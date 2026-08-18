@@ -96,6 +96,36 @@ def build(gfa, db, threads):
     with connect_duckdb(db, threads) as con:
         con.execute(read_sql("post-import.sql"))
 
+@main.command(short_help="Divide segments into smaller pieces")
+@click.option("-i", "--db", "--idx", "con",
+              type=DuckDBParamType(),
+              required=True,
+              help="pangenome duckdb database")
+@click.option("-o", "--out", "outfile",
+              type=click.Path(),
+              required=True,
+              help="path to output pangenome duckdb database")
+@click.option("-c", "--chop-to",
+              type=click.INT,
+              metavar="N",
+              required=True,
+              help="divide segments longer than N")
+@common_options
+def chop(con, outfile, chop_to, threads):
+    set_duckdb_threads(con, threads)
+    with connect_duckdb(outfile, threads) as out_con:
+        out_con.execute(read_sql("schema.sql"))
+    con.execute(f"ATTACH '{outfile}' AS output_db (READ_WRITE)")
+    # At the moment, DuckDB only supports prepared parameters in the last
+    # statement. Hence, we have to split up the statements into separate execute
+    # calls.
+    con.execute(read_sql("chop-1.sql"), [chop_to])
+    con.execute(read_sql("chop-2.sql"), [chop_to])
+    con.execute("""
+    DROP TABLE segment_chop;
+    DETACH output_db;
+    """)
+
 @main.command(short_help="Crush runs of Ns")
 @click.option("-i", "--db", "--idx", "con",
               type=DuckDBParamType(),

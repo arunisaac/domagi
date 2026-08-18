@@ -52,6 +52,39 @@ def assert_gfa_equal(expected, actual):
 
     assert read_gfa_file(expected) == read_gfa_file(actual)
 
+@pytest.mark.parametrize("test_data_file, chop_to, expected_output",
+                         [(Path("test-data/test3.gfa"),
+                           1,
+                           Path("test-data/expected-output/test3-chop-1.gfa")),
+                          (Path("test-data/test3.gfa"),
+                           2,
+                           Path("test-data/expected-output/test3-chop-2.gfa")),
+                          (Path("test-data/test3.gfa"),
+                           3,
+                           Path("test-data/expected-output/test3-chop-3.gfa")),
+                          (Path("test-data/test3.gfa"),
+                           4,
+                           Path("test-data/expected-output/test3-chop-4.gfa"))])
+def test_domagi_chop(tmp_path, test_data_file, chop_to, expected_output):
+    duckdb_path = tmp_path / f"{test_data_file.stem}.db"
+    output_duckdb_path = tmp_path / f"{test_data_file.stem}-output.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["build",
+                                  "--gfa", test_data_file,
+                                  "--out", duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["chop",
+                                  "--db", duckdb_path,
+                                  "--chop-to", chop_to,
+                                  "--out", output_duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["view",
+                                  "--to-gfa",
+                                  "--db", output_duckdb_path])
+    assert result.exit_code == 0
+    with open(expected_output) as file:
+        assert_gfa_equal(file, io.StringIO(result.stdout))
+
 @pytest.mark.parametrize("test_data_file, expected_output",
                          [(Path("test-data/test-crush.gfa"),
                            Path("test-data/expected-output/test-crush.gfa"))])
