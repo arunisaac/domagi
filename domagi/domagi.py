@@ -138,20 +138,22 @@ def chop(con, outfile, chop_to, threads):
 @common_options
 def crush(con, outfile, threads):
     set_duckdb_threads(con, threads)
+    with connect_duckdb(outfile, threads) as out_con:
+        out_con.execute(read_sql("schema.sql"))
     con.execute(f"""
     ATTACH '{outfile}' AS output_db (READ_WRITE);
     
-    CREATE TABLE output_db.segment AS
+    INSERT INTO output_db.segment
       SELECT segment.id, name, regexp_replace(sequence, 'N+', 'N', 'g') AS sequence
       FROM segment;
 
-    CREATE TABLE output_db.link AS
+    INSERT INTO output_db.link
       SELECT * FROM link;
 
-    CREATE TABLE output_db.path AS
+    INSERT INTO output_db.path
       SELECT * FROM path;
 
-    CREATE TABLE output_db.path_segment AS
+    INSERT INTO output_db.path_segment
       SELECT * FROM path_segment
       ORDER BY path_id, start, "end"
     """)
