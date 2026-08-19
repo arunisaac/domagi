@@ -17,7 +17,7 @@
 (define-public odgi
   (package
     (name "odgi")
-    (version "0.9.0")
+    (version "0.9.4")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/pangenome/odgi/releases"
@@ -25,7 +25,7 @@
                                   "/odgi-v" version ".tar.gz"))
               (sha256
                (base32
-                "0brg0sz45v1wv4ld3p4jwiab10nyp2f691zfwpiva6g6f71q3cbk"))
+                "10f25fqm1snxr0lw659scns5r4a52lg8131rg50jkwikv1nxw3g5"))
               (snippet
                #~(begin
                    (use-modules (guix build utils))
