@@ -20,7 +20,7 @@ meson compile -C builddir
 
 Run domagi like so:
 ```
-./pre-inst-env python3 -m domagi.domagi <subcommand> ...
+./pre-inst-env domagi <subcommand> ...
 ```
 
 # Run tests
