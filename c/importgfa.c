@@ -54,6 +54,11 @@ static uint8_t orientation2int (char c)
   return c == '+' ? 0 : 1;
 }
 
+static char invert_orientation (char c)
+{
+  return c == '+' ? '-' : '+';
+}
+
 static void pass1_handle_s_line (char *line, str_int_map *segment_id_table, duckdb_appender *appender)
 {
   static int segment_id = 0;
@@ -122,14 +127,22 @@ static void process_l_lines (char **lines, size_t line_count, str_int_map *segme
         char *original_line = lines[line_index];
         // Split L line and write results into data chunk.
         strsep(&lines[line_index], "\t");
-        from_segment_data[chunk_index]
-          = hashtable_get(segment_id_table, strsep(&lines[line_index], "\t"));
-        from_orientation_data[chunk_index]
-          = orientation2int(*strsep(&lines[line_index], "\t"));
-        to_segment_data[chunk_index]
-          = hashtable_get(segment_id_table, strsep(&lines[line_index], "\t"));
-        to_orientation_data[chunk_index]
-          = orientation2int(*strsep(&lines[line_index], "\t\n"));
+        int from_segment = hashtable_get(segment_id_table, strsep(&lines[line_index], "\t"));
+        char from_orientation = *strsep(&lines[line_index], "\t");
+        int to_segment = hashtable_get(segment_id_table, strsep(&lines[line_index], "\t"));
+        char to_orientation = *strsep(&lines[line_index], "\t\n");
+        // Canonicalize L line by ensuring from_segment <= to_segment.
+        if (from_segment <= to_segment) {
+          from_segment_data[chunk_index] = from_segment;
+          from_orientation_data[chunk_index] = orientation2int(from_orientation);
+          to_segment_data[chunk_index] = to_segment;
+          to_orientation_data[chunk_index] = orientation2int(to_orientation);
+        } else {
+          from_segment_data[chunk_index] = to_segment;
+          from_orientation_data[chunk_index] = orientation2int(invert_orientation(to_orientation));
+          to_segment_data[chunk_index] = from_segment;
+          to_orientation_data[chunk_index] = orientation2int(invert_orientation(from_orientation));
+        }
         free(original_line);
       }
       // Write chunk to database.
