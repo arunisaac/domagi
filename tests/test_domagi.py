@@ -28,10 +28,19 @@ import pytest
 from domagi.domagi import main
 
 def assert_gfa_equal(expected, actual):
+    def invert_orientation(orientation):
+        return "-" if orientation=="+" else "+"
+
     def process_gfa_line(line):
         fields = line.split("\t")
         if fields[0] == "L":
-            return fields[:5]
+            _, from_segment, from_orientation, to_segment, to_orientation = fields[:5]
+            if from_segment <= to_segment:
+                return ["L", from_segment, from_orientation, to_segment, to_orientation]
+            else:
+                return ["L",
+                        to_segment, invert_orientation(to_orientation),
+                        from_segment, invert_orientation(from_orientation)]
         elif fields[0] == "P":
             return fields[:3]
         else:
