@@ -28,7 +28,7 @@ import tempfile
 import click
 import duckdb
 
-threads_option = click.option("-t", "--threads", "threads",
+threads_option = click.option("-t", "--threads",
                               type=click.INT,
                               help="number of threads (default: number of CPUs)")
 # The -P, --progress flags are no-ops in domagi. But, we add them to remain
