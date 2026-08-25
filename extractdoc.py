@@ -18,7 +18,8 @@ def clickfunc2commands(func):
         info = ctx.to_info_dict()
     return [Command(name,
                     (frozenset({tuple(parameter["opts"])
-                                for parameter in properties["params"]})
+                                for parameter in properties["params"]
+                                if not parameter["hidden"]})
                      # We add the -h variant of the help option to all
                      # subcommands through the context settings. This does not
                      # reflect properly in the info dict. Hence this hack to add
