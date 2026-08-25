@@ -1,0 +1,18 @@
+H	VN:Z:1.0
+S	6	TTG
+L	6	+	7	+	0M
+L	6	+	8	+	0M
+S	7	A
+L	7	+	9	+	0M
+S	8	G
+L	8	+	9	+	0M
+S	9	AAATTTTCTGGAGTTCTAT
+L	9	+	10	+	0M
+L	9	+	11	+	0M
+S	10	A
+L	10	+	12	+	0M
+S	11	T
+L	11	+	12	+	0M
+S	12	ATAT
+P	x	6+,8+,9+,11+,12+	*
+P	y	6+,7+,9+,10+,12+	*

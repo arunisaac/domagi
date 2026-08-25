@@ -206,6 +206,34 @@ def test_domagi_depth_bed_windows(tmp_path, request, domagi_db_name, bed_windows
                        pd.read_csv(io.StringIO(result.stdout), sep="\t"),
                        check_dtype=False)
 
+@pytest.mark.xfail
+@pytest.mark.parametrize("domagi_db_name, context_steps, expected_output",
+                         [("domagi_db_test1",
+                           1,
+                           Path("test-data/expected-output/test1-extract-node-1.gfa")),
+                          ("domagi_db_test1",
+                           2,
+                           Path("test-data/expected-output/test1-extract-node-2.gfa")),
+                          ("domagi_db_test1",
+                           3,
+                           Path("test-data/expected-output/test1-extract-node-3.gfa"))])
+def test_domagi_extract_node(tmp_path, request, domagi_db_name, context_steps, expected_output):
+    domagi_db = request.getfixturevalue(domagi_db_name)
+    output_duckdb_path = tmp_path / f"{domagi_db.stem}-output.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["extract",
+                                  "--db", domagi_db,
+                                  "--node", "9",
+                                  "--context-steps", context_steps,
+                                  "--out", output_duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["view",
+                                  "--to-gfa",
+                                  "--db", output_duckdb_path])
+    assert result.exit_code == 0
+    with open(expected_output) as file:
+        assert_gfa_equal(file, io.StringIO(result.stdout))
+
 @pytest.mark.parametrize("domagi_db_name, expected_output",
                          [("domagi_db_test1",
                            Path("test-data/expected-output/test1-matrix")),

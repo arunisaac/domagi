@@ -1,0 +1,12 @@
+H	VN:Z:1.0
+S	7	A
+L	7	+	9	+	0M
+S	8	G
+L	8	+	9	+	0M
+S	9	AAATTTTCTGGAGTTCTAT
+L	9	+	10	+	0M
+L	9	+	11	+	0M
+S	10	A
+S	11	T
+P	x	8+,9+,11+	*
+P	y	7+,9+,10+	*
