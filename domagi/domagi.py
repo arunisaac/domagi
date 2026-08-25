@@ -28,9 +28,15 @@ import tempfile
 import click
 import duckdb
 
-common_options = click.option("-t", "--threads", "threads",
+threads_option = click.option("-t", "--threads", "threads",
                               type=click.INT,
                               help="number of threads (default: number of CPUs)")
+# The -P, --progress flags are no-ops in domagi. But, we add them to remain
+# compatible with odgi.
+progress_option = click.option("-P", "--progress", is_flag=True, hidden=True)
+
+def common_options(func):
+    return threads_option(progress_option(func))
 
 class DuckDBParamType(click.ParamType):
     name = "DB"
@@ -86,7 +92,7 @@ def main():
               required=True,
               help="output pangenome duckdb database")
 @common_options
-def build(gfa, db, threads):
+def build(gfa, db, threads, progress):
     with connect_duckdb(db, threads) as con:
         con.execute(read_sql("schema.sql"))
     with connect_duckdb(db, threads) as con:
@@ -111,7 +117,7 @@ def build(gfa, db, threads):
               required=True,
               help="divide segments longer than N")
 @common_options
-def chop(con, outfile, chop_to, threads):
+def chop(con, outfile, chop_to, threads, progress):
     set_duckdb_threads(con, threads)
     with connect_duckdb(outfile, threads) as out_con:
         out_con.execute(read_sql("schema.sql"))
@@ -136,7 +142,7 @@ def chop(con, outfile, chop_to, threads):
               required=True,
               help="path to output pangenome duckdb database")
 @common_options
-def crush(con, outfile, threads):
+def crush(con, outfile, threads, progress):
     set_duckdb_threads(con, threads)
     with connect_duckdb(outfile, threads) as out_con:
         out_con.execute(read_sql("schema.sql"))
@@ -174,7 +180,7 @@ def crush(con, outfile, threads):
 @click.option("-b", "--bed-input",
               help="BED file of windows to compute depth over")
 @common_options
-def depth(con, graph_depth_table, paths, bed_input, threads):
+def depth(con, graph_depth_table, paths, bed_input, threads, progress):
     set_duckdb_threads(con, threads)
     assert_paths_exist(con, paths)
     # With the -d flag, print the depth and unique depth of every
@@ -223,7 +229,7 @@ def depth(con, graph_depth_table, paths, bed_input, threads):
               required=True,
               help="number of traversal steps")
 @common_options
-def extract(con, outfile, segment_name, path_range, steps, threads):
+def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     set_duckdb_threads(con, threads)
     with connect_duckdb(outfile, threads) as out_con:
         out_con.execute(read_sql("schema.sql"))
@@ -292,7 +298,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads):
               required=True,
               help="pangenome duckdb database")
 @common_options
-def matrix(con, threads):
+def matrix(con, threads, progress):
     set_duckdb_threads(con, threads)
     segment_count, = con.execute("SELECT COUNT() FROM segment").fetchone()
     df = con.execute(read_sql("matrix.sql")).fetchdf()
@@ -315,7 +321,7 @@ def matrix(con, threads):
               metavar="FILE",
               help="find paths touched by paths listed in FILE")
 @common_options
-def overlap(con, paths, paths_file, threads):
+def overlap(con, paths, paths_file, threads, progress):
     set_duckdb_threads(con, threads)
     if paths_file:
         paths = [line.rstrip() for line in paths_file.readlines()]
@@ -336,7 +342,7 @@ def overlap(con, paths, paths_file, threads):
               is_flag=True,
               help="print paths in FASTA format")
 @common_options
-def paths(con, list_paths, fasta, threads):
+def paths(con, list_paths, fasta, threads, progress):
     set_duckdb_threads(con, threads)
     if list_paths:
         for name, in con.execute("SELECT name FROM path").fetchall():
@@ -368,7 +374,7 @@ def paths(con, list_paths, fasta, threads):
               is_flag=True,
               hidden=True)
 @common_options
-def stats(con, summarize, threads):
+def stats(con, summarize, threads, progress):
     set_duckdb_threads(con, threads)
     print("\t".join(["#length", "nodes", "edges", "paths", "steps"]))
     length, = con.execute("SELECT sum(len(sequence)) FROM segment").fetchone()
@@ -388,7 +394,7 @@ def stats(con, summarize, threads):
               is_flag=True,
               help="write the graph in GFAv1 format to stdout")
 @common_options
-def view(con, to_gfa, threads):
+def view(con, to_gfa, threads, progress):
     set_duckdb_threads(con, threads)
     if to_gfa:
         print("H\tVN:Z:1.0")
