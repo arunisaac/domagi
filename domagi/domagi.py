@@ -371,8 +371,7 @@ def paths(con, list_paths, fasta, threads, progress):
               help="pangenome duckdb database")
 # The --summarize flag seems to be a no-op in odgi.
 @click.option("-S", "--summarize",
-              is_flag=True,
-              hidden=True)
+              is_flag=True)
 @common_options
 def stats(con, summarize, threads, progress):
     set_duckdb_threads(con, threads)
