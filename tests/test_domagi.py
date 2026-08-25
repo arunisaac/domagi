@@ -206,7 +206,6 @@ def test_domagi_depth_bed_windows(tmp_path, request, domagi_db_name, bed_windows
                        pd.read_csv(io.StringIO(result.stdout), sep="\t"),
                        check_dtype=False)
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("domagi_db_name, context_steps, expected_output",
                          [("domagi_db_test1",
                            1,
