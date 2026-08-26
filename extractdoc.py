@@ -37,7 +37,7 @@ def refentry2options(refentry):
                              for option in varlistentry.xpath("dbk:term/dbk:option/text()",
                                                               namespaces=namespaces))
                        for varlistentry
-                       in refentry.xpath("dbk:refsection/dbk:variablelist[dbk:title='Options']//dbk:varlistentry",
+                       in refentry.xpath("dbk:refsection/dbk:variablelist//dbk:varlistentry",
                                          namespaces=namespaces)}))
 
 subcommands = clickfunc2commands(main)
