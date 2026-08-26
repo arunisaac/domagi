@@ -222,7 +222,7 @@ def depth(con, graph_depth_table, paths, bed_input, threads, progress):
               help="segment name from which to begin the traversal")
 @click.option("-r", "--path-range", "path_range",
               type=click.STRING,
-              help="path range specifying segments from which to begin the traversal")
+              help="extract segments in path range")
 @click.option("-c", "--context-steps", "steps",
               type=click.INT,
               # TODO: Add default=0
