@@ -239,7 +239,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
           SELECT segment_id AS id
           FROM path_segment
           INNER JOIN path ON path.id=path_segment.path_id
-          WHERE path.name=$1 AND path_segment.start<$3 AND $2<path_segment.end;
+          WHERE path.name=$1 AND $2<path_segment.end AND path_segment.start<$3;
         """,
                     [path, int(start), int(end)])
     elif segment_name:
