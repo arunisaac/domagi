@@ -199,7 +199,7 @@ def test_domagi_depth_bed_windows(tmp_path, request, domagi_db_name, bed_windows
     domagi_db = request.getfixturevalue(domagi_db_name)
     runner = CliRunner()
     result = runner.invoke(main, ["depth",
-                                  "--bed-input", bed_windows,
+                                  "--bed-input", str(bed_windows),
                                   "--db", domagi_db])
     assert result.exit_code == 0
     assert_frame_equal(pd.read_csv(expected_output, sep="\t"),

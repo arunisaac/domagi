@@ -178,6 +178,11 @@ def crush(con, outfile, threads, progress):
               multiple=True,
               help="only compute the depth of the given path")
 @click.option("-b", "--bed-input",
+              type=click.Path(exists=True,
+                              file_okay=True,
+                              dir_okay=False,
+                              readable=True),
+              metavar="FILE",
               help="BED file of windows to compute depth over")
 @common_options
 def depth(con, graph_depth_table, paths, bed_input, threads, progress):
