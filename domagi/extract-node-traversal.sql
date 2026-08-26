@@ -1,6 +1,7 @@
 CREATE TEMPORARY TABLE selected_segment AS
-  WITH RECURSIVE cte (id, distance) AS (
-      SELECT id, 0 FROM initial_segment
+  WITH RECURSIVE
+    cte (id, distance) AS (
+      SELECT id, 0 FROM segment WHERE segment.name=?
       UNION ALL
       SELECT DISTINCT to_segment, distance+1 FROM cte
       INNER JOIN (
@@ -13,5 +14,5 @@ CREATE TEMPORARY TABLE selected_segment AS
       )
       ON from_segment=id
       WHERE distance<?
-  )
+    )
   SELECT DISTINCT id FROM cte;

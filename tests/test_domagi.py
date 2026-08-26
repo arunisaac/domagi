@@ -233,6 +233,38 @@ def test_domagi_extract_node(tmp_path, request, domagi_db_name, context_steps, e
     with open(expected_output) as file:
         assert_gfa_equal(file, io.StringIO(result.stdout))
 
+@pytest.mark.parametrize("domagi_db_name, path_range, expected_output",
+                         [("domagi_db_test1",
+                           "x:7-8",
+                           Path("test-data/expected-output/test1-extract-path-7-8.gfa")),
+                          ("domagi_db_test1",
+                           "x:7-9",
+                           Path("test-data/expected-output/test1-extract-path-7-9.gfa")),
+                          ("domagi_db_test1",
+                           "x:7-10",
+                           Path("test-data/expected-output/test1-extract-path-7-10.gfa")),
+                          ("domagi_db_test1",
+                           "x:8-9",
+                           Path("test-data/expected-output/test1-extract-path-8-9.gfa")),
+                          ("domagi_db_test1",
+                           "x:8-10",
+                           Path("test-data/expected-output/test1-extract-path-8-10.gfa"))])
+def test_domagi_extract_path(tmp_path, request, domagi_db_name, path_range, expected_output):
+    domagi_db = request.getfixturevalue(domagi_db_name)
+    output_duckdb_path = tmp_path / f"{domagi_db.stem}-output.db"
+    runner = CliRunner()
+    result = runner.invoke(main, ["extract",
+                                  "--db", domagi_db,
+                                  "--path-range", path_range,
+                                  "--out", output_duckdb_path])
+    assert result.exit_code == 0
+    result = runner.invoke(main, ["view",
+                                  "--to-gfa",
+                                  "--db", output_duckdb_path])
+    assert result.exit_code == 0
+    with open(expected_output) as file:
+        assert_gfa_equal(file, io.StringIO(result.stdout))
+
 @pytest.mark.parametrize("domagi_db_name, expected_output",
                          [("domagi_db_test1",
                            Path("test-data/expected-output/test1-matrix")),

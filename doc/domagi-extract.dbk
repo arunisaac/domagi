@@ -9,23 +9,29 @@
       <title>Options</title>
       <xi:include href="input-db-argument.dbk" />
       <xi:include href="output-db-argument.dbk" />
+      <xi:include href="threads-argument.dbk" />
+      <xi:include href="help-option.dbk" />
+    </variablelist>
+    <variablelist>
+      <title>Traverse the graph from a segment</title>
       <varlistentry>
         <term><option>-n <replaceable>SEGMENT</replaceable></option></term>
         <term><option>--node=<replaceable>SEGMENT</replaceable></option></term>
         <listitem><para>Segment name from which to begin the traversal</para></listitem>
       </varlistentry>
       <varlistentry>
-        <term><option>-r <replaceable>PATH_RANGE</replaceable></option></term>
-        <term><option>--path-range=<replaceable>PATH_RANGE</replaceable></option></term>
-        <listitem><para>Path range, in <replaceable>path[:pos1[-pos2]]</replaceable> format, from which to begin the traversal</para></listitem>
-      </varlistentry>
-      <varlistentry>
         <term><option>-c <replaceable>STEPS</replaceable></option></term>
         <term><option>--context-steps=<replaceable>STEPS</replaceable></option></term>
         <listitem><para>The number of segments away from the initial segments to traverse</para></listitem>
       </varlistentry>
-      <xi:include href="threads-argument.dbk" />
-      <xi:include href="help-option.dbk" />
+    </variablelist>
+    <variablelist>
+      <title>Extract segments in path range</title>
+      <varlistentry>
+        <term><option>-r <replaceable>PATH_RANGE</replaceable></option></term>
+        <term><option>--path-range=<replaceable>PATH_RANGE</replaceable></option></term>
+        <listitem><para>Extract segments in <replaceable>PATH_RANGE</replaceable>, specified in the <replaceable>path[:pos1[-pos2]]</replaceable> format. <replaceable>pos1</replaceable> and <replaceable>pos2</replaceable> are 0-based coordinates. The extracted segments include <replaceable>pos1</replaceable> (inclusive) but not <replaceable>pos2</replaceable> (exclusive).</para></listitem>
+      </varlistentry>
     </variablelist>
   </refsection>
 </refentry>

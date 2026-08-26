@@ -226,34 +226,27 @@ def depth(con, graph_depth_table, paths, bed_input, threads, progress):
 @click.option("-c", "--context-steps", "steps",
               type=click.INT,
               # TODO: Add default=0
-              required=True,
               help="number of traversal steps")
 @common_options
 def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     set_duckdb_threads(con, threads)
     with connect_duckdb(outfile, threads) as out_con:
         out_con.execute(read_sql("schema.sql"))
-    if segment_name:
+    if path_range:
+        path, start, end = re.match(r"^([^:]*):(\d+)-(\d+)", path_range).groups()
         con.execute("""
-        CREATE TEMPORARY TABLE initial_segment AS
-          SELECT id FROM segment WHERE segment.name=?
-        """,
-                    [segment_name])
-    elif path_range:
-        # TODO: We're assuming the interval is [start, end) rather
-        # than [start, end]. But check what odgi does.
-        con.execute("""
-        CREATE TEMPORARY TABLE initial_segment AS
+        CREATE TEMPORARY TABLE selected_segment AS
           SELECT segment_id AS id
           FROM path_segment
           INNER JOIN path ON path.id=path_segment.path_id
-          WHERE path.name=? AND start>=? AND start<?;
+          WHERE path.name=$1 AND path_segment.start<$3 AND $2<path_segment.end;
         """,
-        # TODO: Convert extracted strings to integers.
-        re.match(r"^([^:]*):(\d+)-(\d+)", path_range).groups())
+                    [path, int(start), int(end)])
+    elif segment_name:
+        con.execute(read_sql("extract-node-traversal.sql"),
+                    [segment_name, steps])
     else:
         raise ValueError("Neither --node and --path-range specified")
-    con.execute(read_sql("extract-node-traversal.sql"), [steps])
     con.execute(f"""
     ATTACH '{outfile}' AS subset_db (READ_WRITE);
     
@@ -278,7 +271,6 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     GROUP BY id;
 
     DROP TABLE selected_segment;
-    DROP TABLE initial_segment;
     """)
 
 @main.command(short_help="Write graph in sparse matrix format")
