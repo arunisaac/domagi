@@ -1,4 +1,4 @@
 H	VN:Z:1.0
 S	1	CAAATAAG
-P	x	1+	*
-P	y	1+	*
+P	x:0-8	1+	*
+P	y:0-8	1+	*

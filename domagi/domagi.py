@@ -258,20 +258,31 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     SELECT from_segment, from_orientation, to_segment, to_orientation
     FROM selected_segment
     INNER JOIN link ON from_segment=selected_segment.id;
-    
+
+    CREATE TEMPORARY TABLE path_first_start AS
+      SELECT path_id, MIN(start) AS first_start
+      FROM selected_segment
+      INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
+      GROUP BY path_id;
+
     INSERT INTO subset_db.path_segment
-    SELECT path_id, segment_id, segment_orientation, start, "end"
+    -- There are no gaps in the path segments. So, it's enough to subtract
+    -- first_start from the path segment coordinates.
+    SELECT path_segment.path_id, segment_id, segment_orientation, start-first_start, "end"-first_start
     FROM selected_segment
     INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
+    INNER JOIN path_first_start ON path_first_start.path_id=path_segment.path_id
     -- Re-order similar to post-import.sql for optimal access.
     ORDER BY path_id, start, "end";
     
     INSERT INTO subset_db.path
-    SELECT id, ANY_VALUE(name)
+    SELECT id, ANY_VALUE(name) || ':' || MIN(start)+ANY_VALUE(first_start) || '-' || MAX("end")+ANY_VALUE(first_start)
     FROM subset_db.path_segment
     INNER JOIN path ON subset_db.path_segment.path_id=path.id
+    INNER JOIN path_first_start ON path_first_start.path_id=path.id
     GROUP BY id;
 
+    DROP TABLE path_first_start;
     DROP TABLE selected_segment;
     """)
 
