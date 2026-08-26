@@ -253,42 +253,23 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
         re.match(r"^([^:]*):(\d+)-(\d+)", path_range).groups())
     else:
         raise ValueError("Neither --node and --path-range specified")
-    con.execute("""
-    CREATE TEMPORARY TABLE reachable_segment AS
-      WITH RECURSIVE cte (id, distance) AS (
-          SELECT id, 0 FROM initial_segment
-        UNION ALL
-          SELECT DISTINCT to_segment, distance+1 FROM cte
-          INNER JOIN (
-            -- Eliminate directionality of the link table. We must traverse both
-            -- to segments leading out of and to segments leading into the
-            -- current segment.
-            SELECT from_segment, to_segment FROM link
-            UNION
-            SELECT to_segment AS from_segment, from_segment AS to_segment FROM link
-          )
-          ON from_segment=id
-          WHERE distance<?
-      )
-      SELECT DISTINCT id FROM cte;
-    """,
-                   [steps])
+    con.execute(read_sql("extract-node-traversal.sql"), [steps])
     con.execute(f"""
     ATTACH '{outfile}' AS subset_db (READ_WRITE);
     
     INSERT INTO subset_db.segment
-    SELECT segment.id, name, sequence FROM reachable_segment
-    INNER JOIN segment ON segment.id=reachable_segment.id;
+    SELECT segment.id, name, sequence FROM selected_segment
+    INNER JOIN segment ON segment.id=selected_segment.id;
 
     INSERT INTO subset_db.link
     SELECT from_segment, from_orientation, to_segment, to_orientation
-    FROM reachable_segment
-    INNER JOIN link ON from_segment=reachable_segment.id;
+    FROM selected_segment
+    INNER JOIN link ON from_segment=selected_segment.id;
     
     INSERT INTO subset_db.path_segment
     SELECT path_id, segment_id, segment_orientation, start, "end"
-    FROM reachable_segment
-    INNER JOIN path_segment ON path_segment.segment_id=reachable_segment.id;
+    FROM selected_segment
+    INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id;
     
     INSERT INTO subset_db.path
     SELECT id, ANY_VALUE(name)
@@ -296,7 +277,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     INNER JOIN path ON subset_db.path_segment.path_id=path.id
     GROUP BY id;
 
-    DROP TABLE reachable_segment;
+    DROP TABLE selected_segment;
     DROP TABLE initial_segment;
     """)
 
