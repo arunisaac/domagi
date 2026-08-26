@@ -262,7 +262,9 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     INSERT INTO subset_db.path_segment
     SELECT path_id, segment_id, segment_orientation, start, "end"
     FROM selected_segment
-    INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id;
+    INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
+    -- Re-order similar to post-import.sql for optimal access.
+    ORDER BY path_id, start, "end";
     
     INSERT INTO subset_db.path
     SELECT id, ANY_VALUE(name)
