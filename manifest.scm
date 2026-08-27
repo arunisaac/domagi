@@ -1,4 +1,6 @@
-(use-modules ((gnu packages task-management) #:select (git-bug))
+(use-modules ((gnu packages docbook) #:select (docbook-xml docbook-xsltng))
+             ((gnu packages task-management) #:select (git-bug))
+             ((gnu packages xml) #:select (python-lxml))
              ((domagi-package) #:select (domagi))
              ((odgi-package) #:select (odgi))
              (srfi srfi-1))
@@ -11,6 +13,9 @@ with PACKAGES and all packages in ONTO-MANIFEST."
     (manifest (append (map package->manifest-entry packages)
                       (manifest-entries onto-manifest)))))
 
-(manifest-cons* git-bug
+(manifest-cons* docbook-xml
+                docbook-xsltng
+                git-bug
                 odgi
+                python-lxml
                 (package->development-manifest domagi))
