@@ -255,7 +255,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
         raise ValueError("Neither --node and --path-range specified")
     con.execute(f"""
     ATTACH '{outfile}' AS subset_db (READ_WRITE);
-    
+
     INSERT INTO subset_db.segment
     SELECT segment.id, name, sequence FROM selected_segment
     INNER JOIN segment ON segment.id=selected_segment.id;
@@ -280,7 +280,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     INNER JOIN path_first_start ON path_first_start.path_id=path_segment.path_id
     -- Re-order similar to post-import.sql for optimal access.
     ORDER BY path_id, start, "end";
-    
+
     INSERT INTO subset_db.path
     SELECT id, ANY_VALUE(name) || ':' || MIN(start)+ANY_VALUE(first_start) || '-' || MAX("end")+ANY_VALUE(first_start)
     FROM subset_db.path_segment
