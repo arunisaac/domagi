@@ -240,13 +240,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
         out_con.execute(read_sql("schema.sql"))
     if path_range:
         path, start, end = re.match(r"^([^:]*):(\d+)-(\d+)", path_range).groups()
-        con.execute("""
-        CREATE TEMPORARY TABLE selected_segment AS
-          SELECT segment_id AS id
-          FROM path_segment
-          INNER JOIN path ON path.id=path_segment.path_id
-          WHERE path.name=$1 AND $2<path_segment.end AND path_segment.start<$3;
-        """,
+        con.execute(read_sql("extract-path-range.sql"),
                     [path, int(start), int(end)])
     elif segment_name:
         con.execute(read_sql("extract-node-traversal.sql"),
