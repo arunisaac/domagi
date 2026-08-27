@@ -32,6 +32,11 @@
         <term><option>--path-range=<replaceable>PATH_RANGE</replaceable></option></term>
         <listitem><para>Extract segments in <replaceable>PATH_RANGE</replaceable>, specified in the <replaceable>path[:pos1[-pos2]]</replaceable> format. <replaceable>pos1</replaceable> and <replaceable>pos2</replaceable> are 0-based coordinates. The extracted segments include <replaceable>pos1</replaceable> (inclusive) but not <replaceable>pos2</replaceable> (exclusive).</para></listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>-d <replaceable>DISTANCE</replaceable></option></term>
+        <term><option>--max-distance-subpaths=<replaceable>DISTANCE</replaceable></option></term>
+        <listitem><para>Bridge subpaths that are separated by less than <replaceable>DISTANCE</replaceable>. Default <replaceable>DISTANCE</replaceable> is <literal>300000</literal>. This reduces the fragmentation of paths that are unspecified in the input path ranges. Set <replaceable>DISTANCE</replaceable> to <literal>0</literal> to disable bridging.</para></listitem>
+      </varlistentry>
     </variablelist>
   </refsection>
 </refentry>

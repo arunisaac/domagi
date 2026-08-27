@@ -233,8 +233,12 @@ def depth(con, graph_depth_table, paths, bed_input, threads, progress):
               type=click.STRING,
               metavar="PATH[:POS1[-POS2]]",
               help="extract segments in path range")
+@click.option("-d", "--max-distance-subpaths",
+              type=click.INT,
+              default=300*10**3,
+              help="bridge subpaths that are separated by less than this distance (default: 300000)")
 @common_options
-def extract(con, outfile, segment_name, path_range, steps, threads, progress):
+def extract(con, outfile, segment_name, path_range, steps, max_distance_subpaths, threads, progress):
     set_duckdb_threads(con, threads)
     with connect_duckdb(outfile, threads) as out_con:
         out_con.execute(read_sql("schema.sql"))
@@ -259,34 +263,60 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     FROM selected_segment
     INNER JOIN link ON from_segment=selected_segment.id;
 
+    CREATE TEMPORARY TABLE selected_path_segment AS
+      WITH selected_path_segment_with_gap_flag AS (
+             -- Select path segments marking gaps within paths using a gap flag.
+             SELECT path_segment.path_id AS parent_path_id,
+                    segment_id,
+                    segment_orientation,
+                    start,
+                    "end",
+                    CASE WHEN LAG("end") OVER (PARTITION BY path_id ORDER BY start)=start
+                    THEN 0
+                    ELSE 1
+                    END AS gap
+             FROM selected_segment
+             INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id)
+        -- Sum over gap flags to get the new path ID.
+        SELECT SUM(gap) OVER (ORDER BY parent_path_id, start)-1 AS path_id,
+               parent_path_id,
+               segment_id,
+               segment_orientation,
+               start,
+               "end"
+        FROM selected_path_segment_with_gap_flag;
+
     CREATE TEMPORARY TABLE path_first_start AS
+      -- Find the first start coordinate of each new path.
       SELECT path_id, MIN(start) AS first_start
-      FROM selected_segment
-      INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
+      FROM selected_path_segment
       GROUP BY path_id;
 
     INSERT INTO subset_db.path_segment
-    -- There are no gaps in the path segments. So, it's enough to subtract
-    -- first_start from the path segment coordinates.
-    SELECT path_segment.path_id,
+    -- The gaps in the path segments have been resolved by splitting paths into
+    -- smaller continuous paths. So, it's enough to subtract first_start from
+    -- the path segment coordinates.
+    SELECT selected_path_segment.path_id,
            segment_id,
            segment_orientation,
            start-first_start AS start,
-           "end"-first_start AS end
-    FROM selected_segment
-    INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
-    INNER JOIN path_first_start ON path_first_start.path_id=path_segment.path_id
+           "end"-first_start AS "end"
+    FROM selected_path_segment
+    INNER JOIN path_first_start
+            ON path_first_start.path_id=selected_path_segment.path_id
     -- Re-order similar to post-import.sql for optimal access.
     ORDER BY path_id, start, "end";
 
     INSERT INTO subset_db.path
-    SELECT id, ANY_VALUE(name) || ':' || MIN(start)+ANY_VALUE(first_start) || '-' || MAX("end")+ANY_VALUE(first_start)
-    FROM subset_db.path_segment
-    INNER JOIN path ON subset_db.path_segment.path_id=path.id
-    INNER JOIN path_first_start ON path_first_start.path_id=path.id
-    GROUP BY id;
+    -- Write the new paths labelling them based on their parent paths.
+    SELECT selected_path_segment.path_id,
+           ANY_VALUE(name) || ':' || MIN(start) || '-' || MAX("end") AS path_name
+    FROM selected_path_segment
+    INNER JOIN path ON path.id=selected_path_segment.parent_path_id
+    GROUP BY selected_path_segment.path_id;
 
     DROP TABLE path_first_start;
+    DROP TABLE selected_path_segment;
     DROP TABLE selected_segment;
     DETACH subset_db;
     """)
