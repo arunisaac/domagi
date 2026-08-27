@@ -288,6 +288,7 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
 
     DROP TABLE path_first_start;
     DROP TABLE selected_segment;
+    DETACH subset_db;
     """)
 
 @main.command(short_help="Write graph in sparse matrix format")
