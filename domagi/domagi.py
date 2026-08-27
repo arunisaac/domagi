@@ -268,7 +268,11 @@ def extract(con, outfile, segment_name, path_range, steps, threads, progress):
     INSERT INTO subset_db.path_segment
     -- There are no gaps in the path segments. So, it's enough to subtract
     -- first_start from the path segment coordinates.
-    SELECT path_segment.path_id, segment_id, segment_orientation, start-first_start, "end"-first_start
+    SELECT path_segment.path_id,
+           segment_id,
+           segment_orientation,
+           start-first_start AS start,
+           "end"-first_start AS end
     FROM selected_segment
     INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id
     INNER JOIN path_first_start ON path_first_start.path_id=path_segment.path_id
