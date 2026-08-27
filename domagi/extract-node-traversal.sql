@@ -1,3 +1,5 @@
+-- Start with the specified segment and traverse the graph up to a
+-- specified distance picking up more segments along the way.
 CREATE TEMPORARY TABLE selected_segment AS
   WITH RECURSIVE
     cte (id, distance) AS (
