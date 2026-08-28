@@ -1,9 +1,13 @@
 H	VN:Z:1.0
 S	6	TTG
+L	6	+	7	+	0M
 L	6	+	8	+	0M
+S	7	AG
+L	7	+	10	+	0M
 S	8	G
 L	8	+	9	+	0M
 S	9	AAATTTTCTGGAGTTCTAT
+S	10	A
+L	10	+	9	+	0M
 P	x:10-33	6+,8+,9+	*
-P	y:10-13	6+	*
-P	y:14-33	9+	*
+P	y:10-35	6+,7+,10+,9+	*

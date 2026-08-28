@@ -254,43 +254,81 @@ def extract(con, outfile, segment_name, path_range, steps, max_distance_subpaths
     con.execute(f"""
     ATTACH '{outfile}' AS subset_db (READ_WRITE);
 
-    INSERT INTO subset_db.segment
-    SELECT segment.id, name, sequence FROM selected_segment
-    INNER JOIN segment ON segment.id=selected_segment.id;
-
-    INSERT INTO subset_db.link
-    SELECT from_segment, from_orientation, to_segment, to_orientation
-    FROM selected_segment
-    INNER JOIN link ON from_segment=selected_segment.id;
-
     CREATE TEMPORARY TABLE selected_path_segment AS
-      WITH selected_path_segment_with_gap_flag AS (
+      WITH selected_path_segment_with_gap AS (
+             -- Select path segments computing gaps within paths.
+             SELECT path_segment.path_id,
+                    segment_id,
+                    segment_orientation,
+                    start,
+                    "end",
+                    start-LAG("end") OVER (PARTITION BY path_id ORDER BY start) AS gap
+             FROM path_segment
+             INNER JOIN selected_segment ON selected_segment.id=path_segment.segment_id),
+           gap AS (
+             -- Find gaps within paths.
+             SELECT path_id,
+                    LAG("end") OVER (PARTITION BY path_id ORDER BY start) AS start,
+                    start AS "end"
+             FROM selected_path_segment_with_gap
+             QUALIFY gap<=?),
+           selected_path_segment_with_bridged_gaps AS (
+             -- Find segments in gaps, and union them with already selected
+             -- segments.
+             SELECT path_segment.path_id,
+                    segment_id,
+                    segment_orientation,
+                    path_segment.start,
+                    path_segment.end
+             FROM path_segment
+             INNER JOIN gap
+                     ON gap.path_id=path_segment.path_id
+                        AND gap.start<path_segment.end AND path_segment.start<gap.end
+             UNION ALL
+             SELECT path_id, segment_id, segment_orientation, start, "end"
+             FROM selected_path_segment_with_gap),
+           selected_path_segment_with_gap_flag AS (
              -- Select path segments marking gaps within paths using a gap flag.
-             SELECT path_segment.path_id AS parent_path_id,
+             SELECT path_id,
                     segment_id,
                     segment_orientation,
                     start,
                     "end",
                     CASE WHEN LAG("end") OVER (PARTITION BY path_id ORDER BY start)=start
-                    THEN 0
-                    ELSE 1
-                    END AS gap
-             FROM selected_segment
-             INNER JOIN path_segment ON path_segment.segment_id=selected_segment.id)
+                    THEN 0 ELSE 1 END AS gap
+             FROM selected_path_segment_with_bridged_gaps)
         -- Sum over gap flags to get the new path ID.
-        SELECT SUM(gap) OVER (ORDER BY parent_path_id, start)-1 AS path_id,
-               parent_path_id,
+        SELECT SUM(gap) OVER (ORDER BY path_id, start)-1 AS path_id,
+               path_id AS parent_path_id,
                segment_id,
                segment_orientation,
                start,
                "end"
         FROM selected_path_segment_with_gap_flag;
-
+    """,
+                [max_distance_subpaths])
+    con.execute("""
     CREATE TEMPORARY TABLE path_first_start AS
       -- Find the first start coordinate of each new path.
       SELECT path_id, MIN(start) AS first_start
       FROM selected_path_segment
       GROUP BY path_id;
+
+    INSERT INTO subset_db.segment
+    SELECT segment.id, name, sequence
+    FROM segment
+    INNER JOIN (SELECT DISTINCT segment_id FROM selected_path_segment) AS path_segment
+            ON path_segment.segment_id=segment.id;
+
+    INSERT INTO subset_db.link
+    -- Only select links where both the from and to segments are part of the
+    -- extracted subgraph.
+    SELECT from_segment, from_orientation, to_segment, to_orientation
+    FROM link
+    INNER JOIN subset_db.segment segment1
+            ON segment1.id=link.from_segment
+    INNER JOIN subset_db.segment segment2
+            ON segment2.id=link.to_segment;
 
     INSERT INTO subset_db.path_segment
     -- The gaps in the path segments have been resolved by splitting paths into

@@ -35,7 +35,10 @@
       <varlistentry>
         <term><option>-d <replaceable>DISTANCE</replaceable></option></term>
         <term><option>--max-distance-subpaths=<replaceable>DISTANCE</replaceable></option></term>
-        <listitem><para>Bridge subpaths that are separated by less than <replaceable>DISTANCE</replaceable>. Default <replaceable>DISTANCE</replaceable> is <literal>300000</literal>. This reduces the fragmentation of paths that are unspecified in the input path ranges. Set <replaceable>DISTANCE</replaceable> to <literal>0</literal> to disable bridging.</para></listitem>
+        <listitem>
+          <para>Bridge subpaths that are separated by less than <replaceable>DISTANCE</replaceable>. Default <replaceable>DISTANCE</replaceable> is <literal>300000</literal>. This reduces the fragmentation of paths that are unspecified in the input path ranges. Set <replaceable>DISTANCE</replaceable> to <literal>0</literal> to disable bridging.</para>
+          <para>In contrast to odgi, when bridging subpaths, domagi does not use the newly extracted segments to extend the subgraph further and recursively bridge more subpaths.</para>
+        </listitem>
       </varlistentry>
     </variablelist>
   </refsection>

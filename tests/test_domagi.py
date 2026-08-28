@@ -80,6 +80,11 @@ def domagi_db_testcrush(tmp_path_factory):
     return build_db(Path("test-data/test-crush.gfa"),
                     tmp_path_factory.mktemp("db") / "test-crush.db")
 
+@pytest.fixture(scope="session")
+def domagi_db_testextractpathbridge(tmp_path_factory):
+    return build_db(Path("test-data/test-extract-path-bridge.gfa"),
+                    tmp_path_factory.mktemp("db") / "test-extract-path-bridge.db")
+
 @pytest.mark.parametrize("domagi_db_name, chop_to, expected_output",
                          [("domagi_db_test3",
                            1,
@@ -265,18 +270,27 @@ def test_domagi_extract_path(tmp_path, request, domagi_db_name, path_range, expe
     with open(expected_output) as file:
         assert_gfa_equal(file, io.StringIO(result.stdout))
 
-@pytest.mark.parametrize("domagi_db_name, path_range, expected_output",
-                         [("domagi_db_test1",
-                           "x:10-20",
-                           Path("test-data/expected-output/test1-extract-path-no-bridge-10-20.gfa"))])
-def test_domagi_extract_path_no_bridge(tmp_path, request, domagi_db_name, path_range, expected_output):
+@pytest.mark.parametrize("domagi_db_name, max_distance_subpaths, expected_output",
+                         [("domagi_db_testextractpathbridge",
+                           0,
+                           Path("test-data/expected-output/test-extract-path-bridge-0.gfa")),
+                          ("domagi_db_testextractpathbridge",
+                           1,
+                           Path("test-data/expected-output/test-extract-path-bridge-1.gfa")),
+                          ("domagi_db_testextractpathbridge",
+                           2,
+                           Path("test-data/expected-output/test-extract-path-bridge-2.gfa")),
+                          ("domagi_db_testextractpathbridge",
+                           3,
+                           Path("test-data/expected-output/test-extract-path-bridge-3.gfa"))])
+def test_domagi_extract_path_bridge(tmp_path, request, domagi_db_name, max_distance_subpaths, expected_output):
     domagi_db = request.getfixturevalue(domagi_db_name)
     output_duckdb_path = tmp_path / f"{domagi_db.stem}-output.db"
     runner = CliRunner()
     result = runner.invoke(main, ["extract",
                                   "--db", domagi_db,
-                                  "--path-range", path_range,
-                                  "--max-distance-subpaths", "0",
+                                  "--path-range", "x:10-20",
+                                  "--max-distance-subpaths", str(max_distance_subpaths),
                                   "--out", output_duckdb_path])
     assert result.exit_code == 0
     result = runner.invoke(main, ["view",
