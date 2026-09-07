@@ -38,3 +38,7 @@ Ensure that your system has [cmake](https://cmake.org/), [DuckDB](https://duckdb
 pip install git+https://git.systemreboot.net/domagi/
 ```
 You can now run any domagi command in this virtual environment.
+
+# Documentation
+
+See the [manual of the development version](https://forge.systemreboot.net/domagi/manual/dev/en/).
