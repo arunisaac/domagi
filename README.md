@@ -42,3 +42,7 @@ You can now run any domagi command in this virtual environment.
 # Documentation
 
 See the [manual of the development version](https://forge.systemreboot.net/domagi/manual/dev/en/).
+
+# Contributing
+
+Please send questions, feedback, bug reports and patches to [domagi@systemreboot.net](mailto:domagi@systemreboot.net). You may also browse the [archives](https://lists.systemreboot.net/domagi) of previous conversations. We do not accept issues or pull requests on GitHub. Thank you!
