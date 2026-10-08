@@ -17,6 +17,7 @@
 ;;; domagi. If not, see <https://www.gnu.org/licenses/>.
 
 (define-module (domagi-website)
+  #:use-module ((gnu packages diagram) #:select (pikchr))
   #:use-module ((gnu packages docbook) #:select (docbook-xsltng))
   #:use-module ((gnu packages fonts) #:select (font-charter font-fira-code))
   #:use-module ((gnu packages haskell-xyz) #:select (pandoc))
@@ -48,7 +49,30 @@
 (define domagi-web-manual-en-gexp
   (with-imported-modules '((guix build utils))
     #~(begin
-        (use-modules (guix build utils))
+        (use-modules (guix build utils)
+                     (ice-9 popen)
+                     (srfi srfi-26)
+                     (rnrs io ports))
+
+        (define (call-with-input-pipe command proc)
+          (let ((port #f))
+            (dynamic-wind
+              (lambda ()
+                (set! port (apply open-pipe* OPEN_READ command)))
+              (cut proc port)
+              (lambda ()
+                (unless (zero? (close-pipe port))
+                  (error "Command invocation failed" command))))))
+
+        (define (pikchr source svg)
+          (mkdir-p (dirname svg))
+          (call-with-output-file svg
+            (cut display
+                 (call-with-input-pipe (list #$(file-append pikchr "/bin/pikchr")
+                                             "--svg-only"
+                                             source)
+                   get-string-all)
+                 <>)))
 
         (setenv "HOME" "/tmp")
         (set-path-environment-variable
@@ -65,11 +89,17 @@
                           (string-append (getcwd) "/doc"))
         (invoke #$(file-append python "/bin/python3")
                 (string-append #$(package-source domagi) "/extractdoc.py"))
+        (chdir "doc")
+        (pikchr "er.pic"
+                (string-append #$output "/media/er.svg"))
+        (pikchr "schema.pic"
+                (string-append #$output "/media/schema.svg"))
         (invoke #$(file-append docbook-xsltng "/bin/docbook")
                 (string-append "--resources:" #$output)
                 "-xi:on"
                 "resource-base-uri=/domagi/manual/"
-                "-s:doc/domagi.dbk"
+                "mediaobject-output-base-uri=/domagi/manual/media/"
+                "-s:domagi.dbk"
                 (string-append "-o:" #$output "/dev/en/index.html")))))
 
 (define-public domagi-website

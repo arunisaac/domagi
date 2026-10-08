@@ -5,6 +5,45 @@
   <title>domagi manual</title>
   <copyright><year>2026</year><holder>Arun Isaac</holder></copyright>
 </info>
+<chapter>
+  <title>Database Schema</title>
+  <para>domagi uses a SQL schema with the following four tables to represent a pangenome.</para>
+  <variablelist>
+    <varlistentry>
+      <term>segment</term>
+      <listitem><para>entity representing pangenome segments</para></listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>link</term>
+      <listitem><para>many-to-many relation between segments representing pangenome links</para></listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>path</term>
+      <listitem><para>entity representing pangenome paths</para></listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>path_segment</term>
+      <listitem><para>many-to-many relation mapping paths to segments associating them with the path at a certain coordinate</para></listitem>
+    </varlistentry>
+  </variablelist>
+  <para>The schema and the entity relationship diagram are visualized in <xref linkend="schema" /> and <xref linkend="er" /> respectively.</para>
+  <figure xml:id="schema">
+    <title>domagi database schema</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="schema.svg" scale="80" />
+      </imageobject>
+    </mediaobject>
+  </figure>
+  <figure xml:id="er">
+    <title>domagi entity relationship diagram in Chen's notation</title>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="er.svg" scale="90" />
+      </imageobject>
+    </mediaobject>
+  </figure>
+</chapter>
 <reference>
   <title>Reference</title>
   <xi:include href="domagi-build.dbk" />

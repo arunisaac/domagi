@@ -1,0 +1,80 @@
+### domagi --- DuckDB-powered pangenome Swiss Army knife
+### Copyright © 2026 Arun Isaac <arunisaac@systemreboot.net>
+###
+### This file is part of domagi.
+###
+### domagi is free software: you can redistribute it and/or modify it under the
+### terms of the GNU General Public License as published by the Free Software
+### Foundation, either version 3 of the License, or (at your option) any later
+### version.
+###
+### domagi is distributed in the hope that it will be useful, but WITHOUT ANY
+### WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+### FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+### details.
+###
+### You should have received a copy of the GNU General Public License along with
+### domagi. If not, see <https://www.gnu.org/licenses/>.
+
+down
+SegmentId: ellipse "id" italic fill lightgrey
+move 0.5cm
+SegmentName: ellipse "name" fill lightgrey
+move 0.5cm
+SegmentSequence: ellipse "sequence" fill lightgrey
+
+line from SegmentId.e \
+     right 1cm \
+     then down until even with SegmentSequence \
+     then to SegmentSequence.e
+line from SegmentName.e right 2cm
+
+Segment: box "segment" fill mediumslateblue
+line "n" above
+IsIn: diamond "is in" fill coral
+line "n" above thick
+Path: box "path" fill mediumslateblue
+down
+
+line; line right 1cm
+ellipse "id" italic fill lightgrey
+down
+move 0.5cm
+PathName: ellipse "name" fill lightgrey
+line from Path.s \
+     down until even with PathName \
+     then to PathName.w
+
+line from IsIn.s \
+     down \
+     then left
+ellipse "orientation" fill lightgrey width 125%
+down
+move 0.5cm
+IsInStart: ellipse "start" fill lightgrey
+move 0.5cm
+IsInEnd: ellipse "end" fill lightgrey
+line from IsIn.s \
+down until even with IsInStart \
+then to IsInStart.e
+line from IsIn.s \
+down until even with IsInEnd \
+then to IsInEnd.e
+
+move from Segment.n up
+Links: diamond "links" fill coral
+right
+move; move
+ToOrientation: ellipse "to-orientation" fill lightgrey width 175%
+up
+move 0.5cm
+FromOrientation: ellipse "from-orientation" fill lightgrey width 175%
+line from Links.e to ToOrientation.w
+line from FromOrientation.w \
+left 1cm \
+then down until even with ToOrientation
+
+# The space in "n " and " n" is a slight trick to nudge the labels a
+# little.
+line from Links.sw down until even with Segment.n "n " rjust
+line from Links.se down until even with Segment.n " n" ljust

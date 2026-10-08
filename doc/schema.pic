@@ -1,0 +1,45 @@
+### domagi --- DuckDB-powered pangenome Swiss Army knife
+### Copyright © 2026 Arun Isaac <arunisaac@systemreboot.net>
+###
+### This file is part of domagi.
+###
+### domagi is free software: you can redistribute it and/or modify it under the
+### terms of the GNU General Public License as published by the Free Software
+### Foundation, either version 3 of the License, or (at your option) any later
+### version.
+###
+### domagi is distributed in the hope that it will be useful, but WITHOUT ANY
+### WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+### FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+### details.
+###
+### You should have received a copy of the GNU General Public License along with
+### domagi. If not, see <https://www.gnu.org/licenses/>.
+
+down
+Segment: box "segment" fill lightgrey
+SegmentId: box "id"
+box "name"
+box "sequence"
+
+Link: box "link" at 8cm right of Segment width 175% fill lightgrey
+LinkFromSegment: box "from_segment" width 175%
+box "from_orientation" width 175%
+LinkToSegment: box "to_segment" width 175%
+box "to_orientation" width 175%
+
+Path: box "path" at 8cm below Segment fill lightgrey
+PathId: box "id"
+box "name"
+
+box "path_segment" at 8cm right of Path width 200% fill lightgrey
+PathSegmentPathId: box "path_id" width 200%
+PathSegmentSegmentId: box "segment_id" width 200%
+box "segment_orientation" width 200%
+box "start" width 200%
+box "end" width 200%
+
+arrow from SegmentId.e to LinkFromSegment.w
+arrow from SegmentId.e to LinkToSegment.w
+arrow from SegmentId.e to PathSegmentSegmentId.w
+arrow from PathId.e to PathSegmentPathId.w
