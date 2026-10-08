@@ -46,3 +46,7 @@ See the [manual of the development version](https://forge.systemreboot.net/domag
 # Contributing
 
 Please send questions, feedback, bug reports and patches to [domagi@systemreboot.net](mailto:domagi@systemreboot.net). You may also browse the [archives](https://lists.systemreboot.net/domagi) of previous conversations. We do not accept issues or pull requests on GitHub. Thank you!
+
+# License
+
+domagi is free software released under the terms of the [GNU General Public License](https://www.gnu.org/licenses/gpl.html), either version 3 of the License, or (at your option) any later version.
