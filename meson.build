@@ -1,7 +1,14 @@
 project('domagi', 'c')
 
 cc = meson.get_compiler('c')
-duckdb = dependency('DuckDB')
+
+duckdb = dependency('DuckDB', required: false)
+# If pkg-config and cmake dependency discovery failed, fall back to
+# looking for the library manually.
+if not duckdb.found()
+  duckdb = cc.find_library('duckdb')
+endif
+
 omp = dependency('openmp')
 if cc.has_header('verstable.h')
   verstable = declare_dependency()
