@@ -1,0 +1,8 @@
+[wrap-git]
+url = https://github.com/JacksonAllan/Verstable
+revision = v2.2.1
+depth = 1
+patch_directory = verstable
+
+[provide]
+dependency_names = verstable

@@ -1,9 +1,13 @@
 project('domagi', 'c')
 
 cc = meson.get_compiler('c')
-cc.has_header('verstable.h', required: true)
 duckdb = dependency('DuckDB')
 omp = dependency('openmp')
+if cc.has_header('verstable.h')
+  verstable = declare_dependency()
+else
+  verstable = dependency('verstable')
+endif
 
 py = import('python').find_installation()
 py.install_sources('domagi/domagi.py',
@@ -24,5 +28,5 @@ install_data('domagi/matrix.sql',
 
 executable('domagi_importgfa',
            'c/importgfa.c',
-           dependencies: [duckdb, omp],
+           dependencies: [duckdb, omp, verstable],
            install: true)
