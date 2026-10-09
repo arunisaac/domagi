@@ -1,4 +1,4 @@
-project('domagi', 'c')
+project('domagi', 'c', version: '0.1.0')
 
 cc = meson.get_compiler('c')
 
