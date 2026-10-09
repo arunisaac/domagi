@@ -1,0 +1,8 @@
+tools:
+  - odgi
+  - domagi
+chr8:
+  class: File
+  path: chr8.hprc-v1.0-pggb.gfa
+  checksum: sha1$6e430470be58f46e72fa4d037babe972fb0e5845
+threads: 48
